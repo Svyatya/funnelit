@@ -1,0 +1,41 @@
+.funnel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  &__wrapper {
+    display: flex;
+  }
+
+  &__settings {
+    margin-bottom: 40px;
+    min-width: 400px;
+  }
+
+  &__inner {
+    margin-left: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: baseline;
+  }
+
+  &__item {
+    width: 500px;
+    height: 40px;
+    background: gray;
+    margin-bottom: 2px;
+  }
+}
+
+.funnel-canvas {
+  text {
+    &:hover {
+    }
+  }
+
+  polygon {
+    &:hover {
+      //stroke: rgba(blue, 0.7);
+    }
+  }
+}
