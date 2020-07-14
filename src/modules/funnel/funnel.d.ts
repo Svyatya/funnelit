@@ -13,6 +13,7 @@ interface FunnelProps {
         baseWidth: number,
         lastWidth: number,
         marginBetween: number,
-        innerFontSize: number
+        innerFontSize: number,
+        title: string
     }
 }

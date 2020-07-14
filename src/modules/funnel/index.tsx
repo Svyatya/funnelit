@@ -2,7 +2,8 @@ import x                   from 'dom-to-image';
 import React, { useState } from 'react';
 import DataTable           from './DataTable';
 import SvgFunnel           from './SvgFunnel'
-import { Funnel }          from './funnel.d'
+import { Funnel }          from './funnel.d';
+import CanvasFunnel from './CanvasFunnel';
 
 const FunnelWrapper = () => {
     const [funnel, setFunnel] = useState<Funnel[]>([
@@ -20,6 +21,7 @@ const FunnelWrapper = () => {
     const [bgPadding, setBgPadding] = useState(16);
     const [marginBetween, setMargin] = useState(0);
     const [innerFontSize, setInnerFontSize] = useState(20);
+    const [title, setTitle] = useState('Посетители за неделю');
 
     const handleAddValue = () => {
         if (funnel.length > 0 && funnel[funnel.length - 1].value < value)
@@ -49,13 +51,24 @@ const FunnelWrapper = () => {
             itemColor,
             marginBetween,
             lastWidth,
-            innerFontSize
+            innerFontSize,
+            title
         }
     }
 
     return (
         <div className="funnel__wrapper">
             <div className="funnel__settings">
+                <div>
+                    <label>
+                        Заголовок
+                    </label>
+                    <input
+                        onChange={(e) => setTitle(e.target.value)}
+                        value={title}
+                    />
+                </div>
+
                 <div>
                     <label>
                         Цвет фона
@@ -160,7 +173,9 @@ const FunnelWrapper = () => {
 
                 <DataTable items={funnel} onChange={(items) => setFunnel(items)}/>
 
-                <SvgFunnel items={funnel} style={getStyle()}/>
+                <CanvasFunnel items={funnel} style={getStyle()} />
+
+                {/*<SvgFunnel items={funnel} style={getStyle()}/>*/}
             </div>
         </div>
     )

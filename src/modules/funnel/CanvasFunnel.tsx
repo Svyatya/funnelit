@@ -1,18 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { Funnel, FunnelProps }        from './funnel';
 
-const CanvasFunnel = ({style: {baseHeight, baseWidth, bgPadding, itemColor, marginBetween, lastWidth}, items}: FunnelProps) => {
+const CanvasFunnel =
+    ({
+         style: {
+             baseHeight, baseWidth, bgPadding, itemColor, marginBetween, lastWidth, innerFontSize, title
+         },
+         items
+    }: FunnelProps) => {
+
     let [context, setContext] = useState<CanvasRenderingContext2D | null>(null);
+    const baseX = bgPadding + 80;
+    const baseY = bgPadding + (title ? innerFontSize + bgPadding : 0);
+    const funnelElements = [];
+    const textElements = [];
 
     useEffect(() => {
         const canvas = document.getElementById('funnelCanvas') as HTMLCanvasElement;
-        setContext(canvas.getContext('2d'))
+        setContext(canvas.getContext('2d'));
     }, []);
 
     useEffect(() => {
         clear();
         drawScaled();
-        //drawScaled();
     });
 
     function clear() {
@@ -21,94 +31,115 @@ const CanvasFunnel = ({style: {baseHeight, baseWidth, bgPadding, itemColor, marg
         context.clearRect(0, 0, canvas.width, canvas.height);
     }
 
-    function draw() {
-        if (!context) return;
-
-        items.map((item, i) => drawItem(item, i))
-    }
-
-    const drawItem = (item: Funnel, i: number) => {
-        if (!context || !items[0]) return;
-
-        const valueLength = baseWidth / items[0].value;
-
-        const baseX = bgPadding + (baseWidth - (item.value * valueLength)) / 2;
-
-        context.beginPath();
-        context.fillStyle = _gradient1[i] || itemColor;
-        context.moveTo(baseX, i * baseHeight + (i * marginBetween));
-        context.lineTo(baseX + (item.value * valueLength), i * baseHeight + (i * marginBetween));
-        context.lineTo(baseX + (item.value * valueLength), baseHeight + i * baseHeight + (i * marginBetween));
-        context.lineTo(baseX, baseHeight + i * baseHeight + (i * marginBetween));
-        context.fill();
-
-        const textY = baseHeight + i * baseHeight + (i * marginBetween) - 12;
-
-        context.font = '24px Tahoma';
-        context.textAlign = "center";
-        context.fillStyle = 'black';
-        context.fillText(item.value.toString(), (baseWidth + bgPadding * 2) / 2,  textY);
-
-        if (item.label) {
-            context.textAlign = "left";
-            context.fillText(item.label, (baseWidth + bgPadding * 2) + 30, textY)
-        }
-
-
-        if (i < items.length - 1) {
-            const nextItemValue = items[i + 1].value;
-            const nextItemBaseX = bgPadding + (baseWidth - (nextItemValue * valueLength)) / 2;
-
-            context.beginPath();
-            context.fillStyle = _gradient1[i] || itemColor;
-            context.moveTo(baseX, baseHeight + i * baseHeight + (i * marginBetween));
-            context.lineTo(baseX + (item.value * valueLength), baseHeight + i * baseHeight + (i * marginBetween));
-            context.lineTo(nextItemBaseX + (nextItemValue * valueLength), baseHeight + i * baseHeight + (i * marginBetween) + marginBetween);
-            context.lineTo(nextItemBaseX, baseHeight + i * baseHeight + (i * marginBetween) + marginBetween);
-            context.fill();
-        }
-    }
-
     const drawScaled = () => {
         if (!context || !items[0]) return;
         const minusWidth = (baseWidth - lastWidth) / (items.length + 2);
 
-        items.map((item, i) => drawScaledItem(item, i, minusWidth))
+        items.map((item, i) => {
+            drawScaledItem(item, i, minusWidth);
+            drawMainText(item, i, minusWidth);
+            drawPercents(item, i, minusWidth);
+        });
+        drawTitle();
+        drawMainPercent();
+    }
 
-        console.log(minusWidth);
+    const drawTitle = () => {
+        if (!context) return;
+        console.log(bgPadding);
+        context.font = `${innerFontSize}px Tahoma`;
+        context.textAlign = "center";
+        context.fillStyle = 'black';
+        context.fillText(title, baseX + baseWidth / 2, bgPadding + innerFontSize);
     }
 
     const drawScaledItem = (item: Funnel, i: number, minusWidth: number) => {
         if (!context) return;
 
-        const baseX = bgPadding;
-
+        const element = {
+            point1: {
+                x: baseX + (minusWidth * i),
+                y: baseY + i * baseHeight + (i * marginBetween)
+            },
+            point2: {
+                x: baseX + (baseWidth - (minusWidth * i)),
+                y: baseY + i * baseHeight + (i * marginBetween)
+            },
+            point3: {
+                x: baseX + (baseWidth - (minusWidth * (i + 1))),
+                y: baseY + baseHeight + i * baseHeight + (i * marginBetween)
+            },
+            point4: {
+                x: baseX + (minusWidth * (i + 1)),
+                y: baseY + baseHeight + i * baseHeight + (i * marginBetween)
+            }
+        };
 
         context.beginPath();
         context.fillStyle = _gradient2[i] || itemColor;
-        context.moveTo(baseX + (minusWidth * i), bgPadding + i * baseHeight + (i * marginBetween));
-        context.lineTo(baseX + (baseWidth - (minusWidth * i)), bgPadding + i * baseHeight + (i * marginBetween));
-        context.lineTo(baseX + (baseWidth - (minusWidth * (i + 1))), bgPadding + baseHeight + i * baseHeight + (i * marginBetween));
-        context.lineTo(baseX + (minusWidth * (i + 1)), bgPadding + baseHeight + i * baseHeight + (i * marginBetween));
+        context.moveTo(element.point1.x, element.point1.y);
+        context.lineTo(element.point2.x, element.point2.y);
+        context.lineTo(element.point3.x, element.point3.y);
+        context.lineTo(element.point4.x, element.point4.y);
         context.fill();
+    }
 
-        const textY = bgPadding + baseHeight + i * baseHeight + (i * marginBetween) - 12;
+    const drawMainText = (item: Funnel, i: number, minusWidth: number) => {
+        if (!context) return;
+        const textY = baseY + (baseHeight * i) + (baseHeight + innerFontSize - 4) / 2;
 
-        context.font = '24px Tahoma';
+        context.font = `${innerFontSize}px Tahoma`;
         context.textAlign = "center";
         context.fillStyle = 'black';
-        context.fillText(item.value.toString(), baseWidth / 2,  textY);
+        context.fillText(item.value.toString(), baseX + (baseWidth / 2),  textY);
 
 
         if (item.label) {
             context.textAlign = "left";
-            context.fillText(item.label, (baseWidth + bgPadding * 2) + 30, textY)
+            context.fillText(item.label, baseX + (baseWidth) + 30, textY)
         }
+    }
+
+    const drawPercents = (item: Funnel, i: number, minusWidth: number) => {
+        if (!context || i === 0 || !item.value || !items[i - 1].value) return;
+
+        const textY = baseY + (baseHeight * i) + (baseHeight + innerFontSize - 4) / 2;
+        const textX = baseX;
+
+        context.font = `${innerFontSize}px Tahoma`;
+        context.textAlign = "start";
+        context.fillStyle = 'black';
+        context.fillText(`${Math.round(100 / items[i - 1].value * item.value)} %`, textX,  textY);
+    }
+
+    const drawMainPercent = () => {
+        if (!context || items.length === 0 || !items[0].value || !items[items.length - 1].value) return;
+
+        const value = Math.round(100 / items[0].value * items[items.length - 1].value);
+
+        context.font = `${innerFontSize}px Tahoma`;
+        context.textAlign = "start";
+        context.fillStyle = 'black';
+        context.fillText(`${value} %`, bgPadding,  baseY + items.length * baseHeight / 2);
+
+        const textLength = context.measureText(`${value} %`).width;
+
+        context.beginPath();
+        context.fillStyle = 'black';
+        context.moveTo(bgPadding + textLength + 16, baseY + (baseHeight / 2));
+        context.lineTo(bgPadding + textLength + 8, baseY + (baseHeight / 2));
+        context.lineTo(bgPadding + textLength + 8, baseY + items.length * baseHeight - (baseHeight / 2));
+        context.lineTo(bgPadding + textLength + 16, baseY + items.length * baseHeight - (baseHeight / 2));
+        context.stroke();
     }
 
     return (
         <div>
-            <canvas id="funnelCanvas" width={baseWidth + (bgPadding * 2) + 400} height="300"></canvas>
+            <canvas
+                id="funnelCanvas"
+                width={baseWidth + (bgPadding * 2) + 400}
+                height="300"
+            ></canvas>
         </div>
     );
 }
