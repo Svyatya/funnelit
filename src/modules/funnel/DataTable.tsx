@@ -19,6 +19,12 @@ const DataTable = ({ items, onChange }: Props) => {
         onChange(newItems);
     }
 
+    const handleDelete = (i: number) => {
+        const newItems = [...items];
+        newItems.splice(i, 1);
+        onChange(newItems);
+    }
+
     return (
         <table>
             <thead>
@@ -40,6 +46,10 @@ const DataTable = ({ items, onChange }: Props) => {
 
                    <td>
                        <input value={item.label} onChange={(e) => handleLabelChange(e.target.value, i)}/>
+                   </td>
+
+                   <td>
+                       <button onClick={() => handleDelete(i)}>Удалить</button>
                    </td>
                </tr>
             )}

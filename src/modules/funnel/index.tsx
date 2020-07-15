@@ -16,7 +16,7 @@ const FunnelWrapper = () => {
     const [baseWidth, setBaseWidth] = useState(500);
     const [lastWidth, setLastWidth] = useState(250);
     const [baseHeight, setBaseHeight] = useState(60);
-    const [itemColor, setItemColor] = useState('#f28d8d');
+    const [itemColor, setItemColor] = useState('#fee600');
     const [bgColor, setBgColor] = useState('transparent');
     const [bgPadding, setBgPadding] = useState(16);
     const [marginBetween, setMargin] = useState(0);

@@ -10,6 +10,7 @@ const CanvasFunnel =
     }: FunnelProps) => {
 
     let [context, setContext] = useState<CanvasRenderingContext2D | null>(null);
+    const baseColor = hexToRgb(itemColor);
     const baseX = bgPadding + 80;
     const baseY = bgPadding + (title ? innerFontSize + bgPadding : 0);
     const funnelElements = [];
@@ -24,6 +25,17 @@ const CanvasFunnel =
         clear();
         drawScaled();
     });
+
+    function hexToRgb(hex: string) {
+        let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ?
+            [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)] : [255, 255, 255];
+    }
+
+    const getColor = (counter: number) => {
+        const newColor = baseColor.map(i => i - Math.round((i / 100 * (counter * 5))));
+        return `rgb(${newColor[0]}, ${newColor[1]}, ${newColor[2]})`;
+    }
 
     function clear() {
         if (!context) return;
@@ -46,7 +58,7 @@ const CanvasFunnel =
 
     const drawTitle = () => {
         if (!context) return;
-        console.log(bgPadding);
+
         context.font = `${innerFontSize}px Tahoma`;
         context.textAlign = "center";
         context.fillStyle = 'black';
@@ -76,7 +88,7 @@ const CanvasFunnel =
         };
 
         context.beginPath();
-        context.fillStyle = _gradient2[i] || itemColor;
+        context.fillStyle = getColor(i);
         context.moveTo(element.point1.x, element.point1.y);
         context.lineTo(element.point2.x, element.point2.y);
         context.lineTo(element.point3.x, element.point3.y);
@@ -138,13 +150,12 @@ const CanvasFunnel =
             <canvas
                 id="funnelCanvas"
                 width={baseWidth + (bgPadding * 2) + 400}
-                height="300"
+                height={bgPadding * 2 + baseHeight * items.length + 50}
             ></canvas>
         </div>
     );
 }
 
 const _gradient1 = ['#8ddef2', '#68d8f3', '#3cd1ef', '#27acd7', '#8ddef2'];
-const _gradient2 = ['#fee600', '#f1da00', '#e4cf00', '#d7c300', '#FEE600'];
 
 export default CanvasFunnel;
