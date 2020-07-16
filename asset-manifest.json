@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/funnelit/static/css/main.a983c356.chunk.css",
+    "main.js": "/funnelit/static/js/main.de5720c2.chunk.js",
+    "main.js.map": "/funnelit/static/js/main.de5720c2.chunk.js.map",
+    "runtime-main.js": "/funnelit/static/js/runtime-main.e2cb8f58.js",
+    "runtime-main.js.map": "/funnelit/static/js/runtime-main.e2cb8f58.js.map",
+    "static/js/2.f1974ac0.chunk.js": "/funnelit/static/js/2.f1974ac0.chunk.js",
+    "static/js/2.f1974ac0.chunk.js.map": "/funnelit/static/js/2.f1974ac0.chunk.js.map",
+    "index.html": "/funnelit/index.html",
+    "precache-manifest.401bbe00176d7badf8448f3650d92f50.js": "/funnelit/precache-manifest.401bbe00176d7badf8448f3650d92f50.js",
+    "service-worker.js": "/funnelit/service-worker.js",
+    "static/css/main.a983c356.chunk.css.map": "/funnelit/static/css/main.a983c356.chunk.css.map",
+    "static/js/2.f1974ac0.chunk.js.LICENSE.txt": "/funnelit/static/js/2.f1974ac0.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.e2cb8f58.js",
+    "static/js/2.f1974ac0.chunk.js",
+    "static/css/main.a983c356.chunk.css",
+    "static/js/main.de5720c2.chunk.js"
+  ]
+}
