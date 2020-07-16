@@ -1,9 +1,9 @@
-import x                   from 'dom-to-image';
-import React, { useState } from 'react';
-import DataTable           from './DataTable';
-import SvgFunnel           from './SvgFunnel'
-import { Funnel }          from './funnel.d';
-import CanvasFunnel from './CanvasFunnel';
+import x                              from 'dom-to-image';
+import React, { useEffect, useState } from 'react';
+import DataTable                      from './DataTable';
+import SvgFunnel                 from './SvgFunnel'
+import { Funnel, FunnelElement } from './funnel.d';
+import CanvasFunnel              from './CanvasFunnel';
 
 const FunnelWrapper = () => {
     const [funnel, setFunnel] = useState<Funnel[]>([
@@ -22,6 +22,44 @@ const FunnelWrapper = () => {
     const [marginBetween, setMargin] = useState(0);
     const [innerFontSize, setInnerFontSize] = useState(20);
     const [title, setTitle] = useState('Посетители за неделю');
+    const [funnelElements, setFunnelElements] = useState();
+
+    const baseX = bgPadding + 80;
+    const baseY = bgPadding + (title ? innerFontSize + bgPadding : 0);
+    const minusWidth = (baseWidth - lastWidth) / (funnel.length + 2);
+
+    useEffect(() => {
+        transform();
+    }, [funnel, value, baseWidth, lastWidth, baseHeight, itemColor, bgColor, bgPadding, marginBetween, innerFontSize, title]);
+
+    function transform () {
+        let items: FunnelElement[] = [];
+
+        funnel.forEach((item, i) => {
+            items.push({
+                value: item.value,
+                label: item.label,
+                point1: {
+                    x: baseX + (minusWidth * i),
+                    y: baseY + i * baseHeight + (i * marginBetween)
+                },
+                point2: {
+                    x: baseX + (baseWidth - (minusWidth * i)),
+                    y: baseY + i * baseHeight + (i * marginBetween)
+                },
+                point3: {
+                    x: baseX + (baseWidth - (minusWidth * (i + 1))),
+                    y: baseY + baseHeight + i * baseHeight + (i * marginBetween)
+                },
+                point4: {
+                    x: baseX + (minusWidth * (i + 1)),
+                    y: baseY + baseHeight + i * baseHeight + (i * marginBetween)
+                }
+            });
+        });
+
+        setFunnelElements(items);
+    }
 
     const handleAddValue = () => {
         if (funnel.length > 0 && funnel[funnel.length - 1].value < value)
@@ -52,7 +90,9 @@ const FunnelWrapper = () => {
             marginBetween,
             lastWidth,
             innerFontSize,
-            title
+            title,
+            baseX,
+            baseY
         }
     }
 
@@ -173,7 +213,7 @@ const FunnelWrapper = () => {
 
                 <DataTable items={funnel} onChange={(items) => setFunnel(items)}/>
 
-                <CanvasFunnel items={funnel} style={getStyle()} />
+                <CanvasFunnel items={funnel} style={getStyle()} funnelElements={funnelElements} />
 
                 {/*<SvgFunnel items={funnel} style={getStyle()}/>*/}
             </div>

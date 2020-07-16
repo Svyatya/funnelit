@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { Funnel, FunnelProps }        from './funnel';
+import { act }                                from 'react-dom/test-utils';
+import { Funnel, FunnelElement, FunnelProps } from './funnel';
 
 const CanvasFunnel =
     ({
          style: {
-             baseHeight, baseWidth, bgPadding, itemColor, marginBetween, lastWidth, innerFontSize, title
+             baseHeight, baseWidth, bgPadding, itemColor, marginBetween, lastWidth, innerFontSize, title, baseX, baseY
          },
-         items
+         items,
+        funnelElements
     }: FunnelProps) => {
 
     let [context, setContext] = useState<CanvasRenderingContext2D | null>(null);
+    let [currentActiveElement, setActiveElement] = useState(-1);
     const baseColor = hexToRgb(itemColor);
-    const baseX = bgPadding + 80;
-    const baseY = bgPadding + (title ? innerFontSize + bgPadding : 0);
-    const funnelElements = [];
     const textElements = [];
 
     useEffect(() => {
@@ -46,47 +46,33 @@ const CanvasFunnel =
     const drawScaled = () => {
         if (!context || !items[0]) return;
         const minusWidth = (baseWidth - lastWidth) / (items.length + 2);
+        console.log(funnelElements);
+        funnelElements.map((element, i) => {
+            drawScaledItem(element, i);
+        });
 
         items.map((item, i) => {
-            drawScaledItem(item, i, minusWidth);
             drawMainText(item, i, minusWidth);
             drawPercents(item, i, minusWidth);
         });
+
         drawTitle();
         drawMainPercent();
+        drawActiveElement();
     }
 
     const drawTitle = () => {
         if (!context) return;
-
+        console.log(321);
         context.font = `${innerFontSize}px Tahoma`;
         context.textAlign = "center";
         context.fillStyle = 'black';
         context.fillText(title, baseX + baseWidth / 2, bgPadding + innerFontSize);
     }
 
-    const drawScaledItem = (item: Funnel, i: number, minusWidth: number) => {
+    const drawScaledItem = (element: FunnelElement, i: number) => {
         if (!context) return;
-
-        const element = {
-            point1: {
-                x: baseX + (minusWidth * i),
-                y: baseY + i * baseHeight + (i * marginBetween)
-            },
-            point2: {
-                x: baseX + (baseWidth - (minusWidth * i)),
-                y: baseY + i * baseHeight + (i * marginBetween)
-            },
-            point3: {
-                x: baseX + (baseWidth - (minusWidth * (i + 1))),
-                y: baseY + baseHeight + i * baseHeight + (i * marginBetween)
-            },
-            point4: {
-                x: baseX + (minusWidth * (i + 1)),
-                y: baseY + baseHeight + i * baseHeight + (i * marginBetween)
-            }
-        };
-
+        console.log(123);
         context.beginPath();
         context.fillStyle = getColor(i);
         context.moveTo(element.point1.x, element.point1.y);
@@ -104,7 +90,6 @@ const CanvasFunnel =
         context.textAlign = "center";
         context.fillStyle = 'black';
         context.fillText(item.value.toString(), baseX + (baseWidth / 2),  textY);
-
 
         if (item.label) {
             context.textAlign = "left";
@@ -145,12 +130,55 @@ const CanvasFunnel =
         context.stroke();
     }
 
+    const drawActiveElement = () => {
+        if (currentActiveElement === -1 || !context) return;
+
+        const element = funnelElements[currentActiveElement]
+        context.beginPath();
+        context.fillStyle = 'black';
+        context.moveTo(element.point1.x - 1, element.point1.y - 1);
+        context.lineTo(element.point2.x + 1, element.point2.y - 1);
+        context.lineTo(element.point3.x + 1, element.point3.y + 1);
+        context.lineTo(element.point4.x - 1, element.point4.y + 1);
+        context.lineTo(element.point1.x - 1, element.point1.y - 1);
+        context.stroke();
+    }
+
+    const handleMouseMove = (e: React.MouseEvent) => {
+        if (!context) return;
+        let active = activeElement(mousePosition({ clientX: e.clientX, clientY: e.clientY }));
+        if (active != currentActiveElement)
+            setActiveElement(active);
+    }
+
+    const mousePosition = (data: { clientX: number, clientY: number}) => {
+        const canvas = document.getElementById('funnelCanvas')!.getBoundingClientRect();
+
+        return {
+            x: data.clientX - canvas.left,
+            y: data.clientY - canvas.top
+        }
+    }
+
+    const activeElement = (position:  { x:number, y: number}) => {
+        let active = -1;
+
+        funnelElements.forEach((item: any, i: number) => {
+            if (position.x >= item.point1.x && position.x <= item.point2.x
+                && position.y >= item.point1.y && position.y <= item.point3.y)
+                active = i;
+        });
+
+        return active;
+    }
+
     return (
         <div>
             <canvas
                 id="funnelCanvas"
                 width={baseWidth + (bgPadding * 2) + 400}
                 height={bgPadding * 2 + baseHeight * items.length + 50}
+                onMouseMove={handleMouseMove}
             ></canvas>
         </div>
     );
