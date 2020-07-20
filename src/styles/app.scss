@@ -1,41 +1,11 @@
-.funnel {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  &__wrapper {
-    display: flex;
-  }
-
-  &__settings {
-    margin-bottom: 40px;
-    min-width: 400px;
-  }
-
-  &__inner {
-    margin-left: 40px;
-    display: flex;
-    flex-direction: column;
-    align-items: baseline;
-  }
-
-  &__item {
-    width: 500px;
-    height: 40px;
-    background: gray;
-    margin-bottom: 2px;
-  }
+body, #root, .App {
+  height: 100%;
 }
 
-.funnel-canvas {
-  text {
-    &:hover {
-    }
-  }
+@import "form";
+@import "funnel";
+@import "table";
 
-  polygon {
-    &:hover {
-      //stroke: rgba(blue, 0.7);
-    }
-  }
+.data-table {
+  margin: 30px 0;
 }

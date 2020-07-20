@@ -9,6 +9,8 @@ export interface Point {
 }
 
 export interface FunnelElement extends Funnel {
+    bgColor?: string,
+    textColor?: string,
     point1: Point,
     point2: Point,
     point3: Point,

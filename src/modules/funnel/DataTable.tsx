@@ -1,5 +1,6 @@
-import React      from 'react';
-import { Funnel } from './funnel.d';
+import React             from 'react';
+import { Funnel }        from './funnel.d';
+import { Input, Button } from 'antd';
 
 interface Props {
     onChange: (items: Funnel[]) => void,
@@ -26,35 +27,49 @@ const DataTable = ({ items, onChange }: Props) => {
     }
 
     return (
-        <table>
-            <thead>
-            <tr>
-                <th>
-                    Значение
-                </th>
-                <th>
-                    Лэйбл
-                </th>
-            </tr>
-            </thead>
-            <tbody>
-            {items.map((item, i) =>
-               <tr key={i}>
-                   <td>
-                       <input value={item.value} type="number"  onChange={(e) => handleValueChange(+e.target.value, i)}/>
-                   </td>
+        <div className="data-table">
+            <table className="table">
+                <thead>
+                <tr>
+                    <th>
+                        Значение
+                    </th>
+                    <th>
+                        Лэйбл
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                {items.map((item, i) =>
+                    <tr key={i}>
+                        <td>
+                            <Input
+                                value={item.value}
+                                type="number"
+                                onChange={(e) => handleValueChange(+e.target.value, i)}
+                            />
+                        </td>
 
-                   <td>
-                       <input value={item.label} onChange={(e) => handleLabelChange(e.target.value, i)}/>
-                   </td>
+                        <td>
+                            <Input
+                                value={item.label}
+                                onChange={(e) => handleValueChange(+e.target.value, i)}
+                            />
+                        </td>
 
-                   <td>
-                       <button onClick={() => handleDelete(i)}>Удалить</button>
-                   </td>
-               </tr>
-            )}
-            </tbody>
-        </table>
+                        <td>
+                            <Button
+                                onClick={() => handleDelete(i)}
+                                danger
+                            >
+                                Удалить
+                            </Button>
+                        </td>
+                    </tr>
+                )}
+                </tbody>
+            </table>
+        </div>
     );
 }
 

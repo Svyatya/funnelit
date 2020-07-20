@@ -1,17 +1,18 @@
 import x                              from 'dom-to-image';
 import React, { useEffect, useState } from 'react';
 import DataTable                      from './DataTable';
-import SvgFunnel                 from './SvgFunnel'
-import { Funnel, FunnelElement } from './funnel.d';
-import CanvasFunnel              from './CanvasFunnel';
+import { Funnel, FunnelElement }      from './funnel.d';
+import CanvasFunnel                   from './CanvasFunnel';
+import { FormSlider } from '../components';
+import { Input, Slider } from 'antd';
 
 const FunnelWrapper = () => {
     const [funnel, setFunnel] = useState<Funnel[]>([
-        { value: 3720, label: 'Увидели форму' },
-        { value: 772, label: 'Подтвердили телефон' },
-        { value: 644, label: 'Заполнили 50%'},
-        { value: 476, label: 'Дошли до конца' }
+        { value: 3232, label: 'Зашли на сайт' },
+        { value: 1244, label: 'Добавили в корзину' },
+        { value: 540, label: 'Купили' }
     ]);
+
     const [value, setValue] = useState(0);
     const [baseWidth, setBaseWidth] = useState(500);
     const [lastWidth, setLastWidth] = useState(250);
@@ -23,6 +24,7 @@ const FunnelWrapper = () => {
     const [innerFontSize, setInnerFontSize] = useState(20);
     const [title, setTitle] = useState('Посетители за неделю');
     const [funnelElements, setFunnelElements] = useState();
+    let colorTimer = -1;
 
     const baseX = bgPadding + 80;
     const baseY = bgPadding + (title ? innerFontSize + bgPadding : 0);
@@ -32,7 +34,7 @@ const FunnelWrapper = () => {
         transform();
     }, [funnel, value, baseWidth, lastWidth, baseHeight, itemColor, bgColor, bgPadding, marginBetween, innerFontSize, title]);
 
-    function transform () {
+    function transform() {
         let items: FunnelElement[] = [];
 
         funnel.forEach((item, i) => {
@@ -96,126 +98,130 @@ const FunnelWrapper = () => {
         }
     }
 
+    const handleColorChange = (color: string, setColor: Function) => {
+        clearTimeout(colorTimer);
+        colorTimer = window.setTimeout(() => setColor(color), 20);
+    }
+
     return (
         <div className="funnel__wrapper">
             <div className="funnel__settings">
-                <div>
-                    <label>
+                <div className="form__group">
+                    <label className="label">
                         Заголовок
                     </label>
-                    <input
+                    <Input
                         onChange={(e) => setTitle(e.target.value)}
                         value={title}
+                        placeholder="Заголовок"
                     />
                 </div>
 
-                <div>
-                    <label>
+                <div className="form__group">
+                    <label className="label">
+                        Внутренние отступы
+                    </label>
+                    <Slider
+                        value={bgPadding}
+                        onChange={(value: number) => setBgPadding(value)}
+                        max={100}
+                        min={0}
+                    />
+                </div>
+
+                <div className="form__group" >
+                    <label className="label" >
+                        Отступы между элементами
+                    </label>
+                    <Slider
+                        value={marginBetween}
+                        onChange={(value: number) => setMargin(value)}
+                        max={100}
+                        min={0}
+                    />
+                </div>
+
+                <div className="form__group">
+                    <label className="label">
+                        Размер текста в элементах
+                    </label>
+                    <Slider
+                        value={innerFontSize}
+                        onChange={(value: number) => setInnerFontSize(value)}
+                        max={36}
+                        min={12}
+                    />
+                </div>
+
+                <div className="form__group">
+                    <label className="label">
+                        Ширина первого элемента
+                    </label>
+                    <Slider
+                        value={baseWidth}
+                        onChange={(value: number) => setBaseWidth(value)}
+                        max={1000}
+                        min={100}
+                    />
+                </div>
+                <div className="form__group">
+                    <label className="label">
+                        Ширина последнего элемента
+                    </label>
+                    <Slider
+                        value={lastWidth}
+                        onChange={(value: number) => setLastWidth(value)}
+                        max={1000}
+                        min={100}
+                    />
+                </div>
+
+                <div className="form__group">
+                    <label className="label">
+                        Высота элементов
+                    </label>
+                    <Slider
+                        value={baseHeight}
+                        onChange={(value: number) => setBaseHeight(value)}
+                        max={150}
+                        min={10}
+                    />
+                </div>
+
+                <div className="form__group">
+                    <label className="label">
+                        Цвет элементов
+                    </label>
+                    <input
+                        type="color"
+                        onChange={(e) => handleColorChange(e.target.value, setItemColor)}
+                        value={itemColor}
+                    />
+                </div>
+
+                <div className="form__group">
+                    <label className="label">
                         Цвет фона
                     </label>
                     <input
                         type="color"
-                        onChange={(e) => setBgColor(e.target.value)}
+                        onChange={(e) => handleColorChange(e.target.value, setBgColor)}
                         value={bgColor}
                     />
 
                     <button onClick={() => setBgColor('transparent')}>Убрать фон</button>
                 </div>
-
-                <div>
-                    <label>
-                        Отступы от элементов
-                    </label>
-                    <input
-                        value={bgPadding}
-                        onChange={(e) => setBgPadding(Number(e.target.value))}
-                        type="range"
-                        max="100"
-                        min="0"
-                    />
-                </div>
-
-                <div>
-                    <label>
-                        Отступы между элементами
-                    </label>
-                    <input
-                        value={marginBetween}
-                        onChange={(e) => setMargin(Number(e.target.value))}
-                        type="range"
-                        max="100"
-                        min="0"
-                    />
-                </div>
-
-                <div>
-                    <label>
-                        Размер текста в элементах
-                    </label>
-                    <input
-                        value={innerFontSize}
-                        onChange={(e) => setInnerFontSize(Number(e.target.value))}
-                        type="range"
-                        max="36"
-                        min="12"
-                    />
-                </div>
-
-
-                <div>
-                    <label>
-                        Цвет элементов
-                    </label>
-                    <input
-                        type="color"
-                        onChange={(e) => setItemColor(e.target.value)}
-                        value={itemColor}
-                    />
-                </div>
-                <div>
-                    <label>
-                        Ширина первого элемента
-                    </label>
-                    <input
-                        value={baseWidth}
-                        onChange={(e) => setBaseWidth(Number(e.target.value))}
-                        type="range"
-                        max="1000"
-                        min="100"
-                    />
-                </div>
-                <div>
-                    <label>
-                        Ширина последнего элемента
-                    </label>
-                    <input
-                        value={lastWidth}
-                        onChange={(e) => setLastWidth(Number(e.target.value))}
-                        type="range"
-                        max="1000"
-                        min="100"
-                    />
-                </div>
-                <div>
-                    <label>
-                        Высота элементов
-                    </label>
-                    <input value={baseHeight} onChange={(e) => setBaseHeight(Number(e.target.value))} type="range"/>
-                </div>
             </div>
 
             <div className="funnel__inner">
-                <div className="funnel__settings">
+                <div>
                     <input onChange={(e) => setValue(+e.target.value)} type="tel" value={value}/>
                     <button onClick={handleAddValue}>Добавить</button>
                     <button onClick={handleDownload}>Выгрузить</button>
                 </div>
 
                 <DataTable items={funnel} onChange={(items) => setFunnel(items)}/>
-
-                <CanvasFunnel items={funnel} style={getStyle()} funnelElements={funnelElements} />
-
-                {/*<SvgFunnel items={funnel} style={getStyle()}/>*/}
+                <CanvasFunnel items={funnel} style={getStyle()} funnelElements={funnelElements}/>
             </div>
         </div>
     )

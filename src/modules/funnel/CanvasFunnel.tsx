@@ -46,7 +46,7 @@ const CanvasFunnel =
     const drawScaled = () => {
         if (!context || !items[0]) return;
         const minusWidth = (baseWidth - lastWidth) / (items.length + 2);
-        console.log(funnelElements);
+
         funnelElements.map((element, i) => {
             drawScaledItem(element, i);
         });
@@ -63,7 +63,7 @@ const CanvasFunnel =
 
     const drawTitle = () => {
         if (!context) return;
-        console.log(321);
+
         context.font = `${innerFontSize}px Tahoma`;
         context.textAlign = "center";
         context.fillStyle = 'black';
@@ -72,7 +72,7 @@ const CanvasFunnel =
 
     const drawScaledItem = (element: FunnelElement, i: number) => {
         if (!context) return;
-        console.log(123);
+
         context.beginPath();
         context.fillStyle = getColor(i);
         context.moveTo(element.point1.x, element.point1.y);
@@ -173,9 +173,10 @@ const CanvasFunnel =
     }
 
     return (
-        <div>
+        <div className="funnel-canvas__wrapper">
             <canvas
                 id="funnelCanvas"
+                className="funnel-canvas"
                 width={baseWidth + (bgPadding * 2) + 400}
                 height={bgPadding * 2 + baseHeight * items.length + 50}
                 onMouseMove={handleMouseMove}
