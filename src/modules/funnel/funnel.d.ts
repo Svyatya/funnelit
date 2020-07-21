@@ -32,5 +32,7 @@ interface FunnelProps {
         baseX: number,
         baseY: number
     },
-    funnelElements: FunnelElement[]
+    funnelElements: FunnelElement[],
+    setEditableElement: (i: number | null) => void,
+    editableElement: number | null
 }

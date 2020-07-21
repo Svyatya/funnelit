@@ -24,10 +24,11 @@ const FunnelWrapper = () => {
     const [innerFontSize, setInnerFontSize] = useState(20);
     const [title, setTitle] = useState('Посетители за неделю');
     const [funnelElements, setFunnelElements] = useState();
+    const [editableElement, setEditableElement] = useState<number | null>(null);
     let colorTimer = -1;
 
-    const baseX = bgPadding + 80;
-    const baseY = bgPadding + (title ? innerFontSize + bgPadding : 0);
+    const baseX = bgPadding + 100;
+    const baseY = bgPadding + (title ? innerFontSize * 2 : 0);
     const minusWidth = (baseWidth - lastWidth) / (funnel.length + 2);
 
     useEffect(() => {
@@ -38,24 +39,26 @@ const FunnelWrapper = () => {
         let items: FunnelElement[] = [];
 
         funnel.forEach((item, i) => {
+            const currentMargin = i * marginBetween;
+
             items.push({
                 value: item.value,
                 label: item.label,
                 point1: {
-                    x: baseX + (minusWidth * i),
-                    y: baseY + i * baseHeight + (i * marginBetween)
+                    x: baseX + (minusWidth * i) + currentMargin / 2,
+                    y: baseY + i * baseHeight + currentMargin
                 },
                 point2: {
-                    x: baseX + (baseWidth - (minusWidth * i)),
-                    y: baseY + i * baseHeight + (i * marginBetween)
+                    x: baseX + (baseWidth - (minusWidth * i)) - currentMargin / 2,
+                    y: baseY + i * baseHeight + currentMargin
                 },
                 point3: {
-                    x: baseX + (baseWidth - (minusWidth * (i + 1))),
-                    y: baseY + baseHeight + i * baseHeight + (i * marginBetween)
+                    x: baseX + (baseWidth - (minusWidth * (i + 1))) - currentMargin / 2,
+                    y: baseY + baseHeight + i * baseHeight + currentMargin
                 },
                 point4: {
-                    x: baseX + (minusWidth * (i + 1)),
-                    y: baseY + baseHeight + i * baseHeight + (i * marginBetween)
+                    x: baseX + (minusWidth * (i + 1)) + currentMargin / 2,
+                    y: baseY + baseHeight + i * baseHeight + currentMargin
                 }
             });
         });
@@ -221,7 +224,13 @@ const FunnelWrapper = () => {
                 </div>
 
                 <DataTable items={funnel} onChange={(items) => setFunnel(items)}/>
-                <CanvasFunnel items={funnel} style={getStyle()} funnelElements={funnelElements}/>
+                <CanvasFunnel
+                    items={funnel}
+                    style={getStyle()}
+                    funnelElements={funnelElements}
+                    setEditableElement={setEditableElement}
+                    editableElement={editableElement}
+                />
             </div>
         </div>
     )
