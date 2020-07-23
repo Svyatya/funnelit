@@ -20,7 +20,7 @@ export interface FunnelElement extends Funnel {
 interface FunnelProps {
     items: Funnel[],
     style: {
-        bgColor: string,
+        bgColor: string | null,
         bgPadding: number,
         baseHeight: number,
         itemColor: string,

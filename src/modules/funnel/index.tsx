@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react';
 import DataTable                      from './DataTable';
 import { Funnel, FunnelElement }      from './funnel.d';
 import CanvasFunnel                   from './CanvasFunnel';
-import { FormSlider } from '../components';
-import { Input, Slider } from 'antd';
+import { Input, Slider }              from 'antd';
+import { FormSlider, ColorEdit }      from '../components'
 
 const FunnelWrapper = () => {
     const [funnel, setFunnel] = useState<Funnel[]>([
@@ -17,8 +17,8 @@ const FunnelWrapper = () => {
     const [baseWidth, setBaseWidth] = useState(500);
     const [lastWidth, setLastWidth] = useState(250);
     const [baseHeight, setBaseHeight] = useState(60);
-    const [itemColor, setItemColor] = useState('#fee600');
-    const [bgColor, setBgColor] = useState('transparent');
+    const [itemColor, setItemColor] = useState<null | string>('#fee600');
+    const [bgColor, setBgColor] = useState<null | string>(null);
     const [bgPadding, setBgPadding] = useState(16);
     const [marginBetween, setMargin] = useState(0);
     const [innerFontSize, setInnerFontSize] = useState(20);
@@ -44,6 +44,8 @@ const FunnelWrapper = () => {
             items.push({
                 value: item.value,
                 label: item.label,
+                textColor: '#000000',
+                bgColor: '#eeeeee',
                 point1: {
                     x: baseX + (minusWidth * i) + currentMargin / 2,
                     y: baseY + i * baseHeight + currentMargin
@@ -91,7 +93,7 @@ const FunnelWrapper = () => {
             baseWidth,
             bgPadding,
             bgColor,
-            itemColor,
+            itemColor: itemColor!,
             marginBetween,
             lastWidth,
             innerFontSize,
@@ -101,14 +103,13 @@ const FunnelWrapper = () => {
         }
     }
 
-    const handleColorChange = (color: string, setColor: Function) => {
-        clearTimeout(colorTimer);
-        colorTimer = window.setTimeout(() => setColor(color), 20);
-    }
-
     return (
         <div className="funnel__wrapper">
             <div className="funnel__settings">
+                {editableElement !== null &&
+                <div>123</div>
+                }
+
                 <div className="form__group">
                     <label className="label">
                         Заголовок
@@ -120,100 +121,61 @@ const FunnelWrapper = () => {
                     />
                 </div>
 
-                <div className="form__group">
-                    <label className="label">
-                        Внутренние отступы
-                    </label>
-                    <Slider
-                        value={bgPadding}
-                        onChange={(value: number) => setBgPadding(value)}
-                        max={100}
-                        min={0}
-                    />
-                </div>
+                <FormSlider
+                    max={100}
+                    min={0}
+                    value={bgPadding}
+                    label={'Внутренние отступы'}
+                    onChange={setBgPadding}
+                />
+                <FormSlider
+                    max={100}
+                    min={0}
+                    value={marginBetween}
+                    label={'Отступы между элементами'}
+                    onChange={setMargin}
+                />
+                <FormSlider
+                    max={36}
+                    min={12}
+                    value={innerFontSize}
+                    label={'Размер текста в элементах'}
+                    onChange={setInnerFontSize}
+                />
+                <FormSlider
+                    max={1000}
+                    min={100}
+                    value={baseWidth}
+                    label={'Ширина первого элемента'}
+                    onChange={setBaseWidth}
+                />
+                <FormSlider
+                    max={1000}
+                    min={100}
+                    value={lastWidth}
+                    label={'Ширина последнего элемента'}
+                    onChange={setLastWidth}
+                />
+                <FormSlider
+                    max={150}
+                    min={10}
+                    value={baseHeight}
+                    label={'Высота элементов'}
+                    onChange={setBaseHeight}
+                />
 
-                <div className="form__group" >
-                    <label className="label" >
-                        Отступы между элементами
-                    </label>
-                    <Slider
-                        value={marginBetween}
-                        onChange={(value: number) => setMargin(value)}
-                        max={100}
-                        min={0}
-                    />
-                </div>
+                <ColorEdit
+                    label={'Базовый цвет элементов'}
+                    value={itemColor}
+                    onChange={(data) => setItemColor(data.hex)}
+                />
 
-                <div className="form__group">
-                    <label className="label">
-                        Размер текста в элементах
-                    </label>
-                    <Slider
-                        value={innerFontSize}
-                        onChange={(value: number) => setInnerFontSize(value)}
-                        max={36}
-                        min={12}
-                    />
-                </div>
-
-                <div className="form__group">
-                    <label className="label">
-                        Ширина первого элемента
-                    </label>
-                    <Slider
-                        value={baseWidth}
-                        onChange={(value: number) => setBaseWidth(value)}
-                        max={1000}
-                        min={100}
-                    />
-                </div>
-                <div className="form__group">
-                    <label className="label">
-                        Ширина последнего элемента
-                    </label>
-                    <Slider
-                        value={lastWidth}
-                        onChange={(value: number) => setLastWidth(value)}
-                        max={1000}
-                        min={100}
-                    />
-                </div>
-
-                <div className="form__group">
-                    <label className="label">
-                        Высота элементов
-                    </label>
-                    <Slider
-                        value={baseHeight}
-                        onChange={(value: number) => setBaseHeight(value)}
-                        max={150}
-                        min={10}
-                    />
-                </div>
-
-                <div className="form__group">
-                    <label className="label">
-                        Цвет элементов
-                    </label>
-                    <input
-                        type="color"
-                        onChange={(e) => handleColorChange(e.target.value, setItemColor)}
-                        value={itemColor}
-                    />
-                </div>
-
-                <div className="form__group">
-                    <label className="label">
-                        Цвет фона
-                    </label>
-                    <input
-                        type="color"
-                        onChange={(e) => handleColorChange(e.target.value, setBgColor)}
-                        value={bgColor}
-                    />
-
-                    <button onClick={() => setBgColor('transparent')}>Убрать фон</button>
-                </div>
+                <ColorEdit
+                    label={'Цвет фона'}
+                    value={bgColor}
+                    onChange={(data) => setBgColor(data.hex)}
+                    clear
+                />
             </div>
 
             <div className="funnel__inner">

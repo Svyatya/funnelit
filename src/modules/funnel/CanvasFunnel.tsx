@@ -14,7 +14,7 @@ const CanvasFunnel =
 
     const [context, setContext] = useState<CanvasRenderingContext2D | null>(null);
     const [currentActiveElement, setActiveElement] = useState<number | null>(null);
-    const baseColor = hexToRgb(itemColor);
+    const baseColor = hexToRgb(itemColor!);
 
     useEffect(() => {
         const canvas = document.getElementById('funnelCanvas') as HTMLCanvasElement;
@@ -48,10 +48,10 @@ const CanvasFunnel =
 
         funnelElements.map((element, i) => {
             drawScaledItem(element, i);
+            drawMainText(element, i);
         });
 
         items.map((item, i) => {
-            drawMainText(item, i);
             drawPercents(item, i);
         });
 
@@ -74,7 +74,7 @@ const CanvasFunnel =
         if (!context) return;
 
         context.beginPath();
-        context.fillStyle = getColor(i);
+        context.fillStyle = element.bgColor || getColor(i);
         context.moveTo(element.point1.x, element.point1.y);
         context.lineTo(element.point2.x, element.point2.y);
         context.lineTo(element.point3.x, element.point3.y);
@@ -82,13 +82,13 @@ const CanvasFunnel =
         context.fill();
     }
 
-    const drawMainText = (item: Funnel, i: number) => {
+    const drawMainText = (item: FunnelElement, i: number) => {
         if (!context) return;
         const textY = baseY + (baseHeight * i) + (baseHeight + innerFontSize - 4) / 2;
 
         context.font = `${innerFontSize}px Tahoma`;
         context.textAlign = "center";
-        context.fillStyle = 'black';
+        context.fillStyle = item.textColor || 'black';
         context.fillText(item.value.toString(), baseX + (baseWidth / 2),  textY + (marginBetween * i));
 
         if (item.label) {
