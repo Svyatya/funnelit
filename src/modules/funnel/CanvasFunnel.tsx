@@ -93,6 +93,7 @@ const CanvasFunnel =
 
         if (item.label) {
             context.textAlign = "left";
+            context.fillStyle = item.labelColor || 'black';
             context.fillText(item.label, baseX + (baseWidth) + 30, textY + (marginBetween * i))
         }
     }

@@ -6,6 +6,23 @@
       margin-bottom: 4px;
     }
   }
+
+  &__color {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    &__value {
+      margin-right: auto;
+      margin-left: 14px;
+      font-size: 16px;
+    }
+
+    input {
+      height: 30px;
+      width: 80px;
+    }
+  }
 }
 
 .label {

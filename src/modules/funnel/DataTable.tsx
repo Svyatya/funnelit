@@ -1,5 +1,5 @@
-import React             from 'react';
-import { Funnel }        from './funnel.d';
+import React, { useState } from 'react';
+import { Funnel }          from './funnel.d';
 import { Input, Button } from 'antd';
 
 interface Props {
@@ -8,6 +8,11 @@ interface Props {
 }
 
 const DataTable = ({ items, onChange }: Props) => {
+    const [element, setElement] = useState({
+        value: 0,
+        label: ''
+    });
+
     const handleLabelChange = (value: string, i: number) => {
         const newItems = [...items];
         newItems[i].label = value;
@@ -24,6 +29,15 @@ const DataTable = ({ items, onChange }: Props) => {
         const newItems = [...items];
         newItems.splice(i, 1);
         onChange(newItems);
+    }
+
+    const handleAddElement = () => {
+        //if (elevalue === undefined) return;
+
+        const newItems = [...items];
+        newItems.push(element);
+        onChange(newItems);
+        setElement({value: 0, label: ''});
     }
 
     return (
@@ -67,6 +81,31 @@ const DataTable = ({ items, onChange }: Props) => {
                         </td>
                     </tr>
                 )}
+
+                <tr>
+                    <td>
+                        <Input
+                            value={element.value}
+                            type="number"
+                            onChange={(e) => setElement({value: +e.target.value, label: element.label})}
+                        />
+                    </td>
+
+                    <td>
+                        <Input
+                            value={element.label}
+                            onChange={(e) => setElement({value: element.value, label: e.target.value})}
+                        />
+                    </td>
+
+                    <td>
+                        <Button
+                            onClick={handleAddElement}
+                        >
+                            Добавить
+                        </Button>
+                    </td>
+                </tr>
                 </tbody>
             </table>
         </div>

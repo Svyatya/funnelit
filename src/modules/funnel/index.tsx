@@ -4,7 +4,9 @@ import DataTable                      from './DataTable';
 import { Funnel, FunnelElement }      from './funnel.d';
 import CanvasFunnel                   from './CanvasFunnel';
 import { Input, Slider }              from 'antd';
-import { FormSlider, ColorEdit }      from '../components'
+import { FormSlider, ColorEdit }      from '../components';
+import EditableElement from './EditableElement';
+import NewElement from './NewElement';
 
 const FunnelWrapper = () => {
     const [funnel, setFunnel] = useState<Funnel[]>([
@@ -44,8 +46,6 @@ const FunnelWrapper = () => {
             items.push({
                 value: item.value,
                 label: item.label,
-                textColor: '#000000',
-                bgColor: '#eeeeee',
                 point1: {
                     x: baseX + (minusWidth * i) + currentMargin / 2,
                     y: baseY + i * baseHeight + currentMargin
@@ -103,12 +103,26 @@ const FunnelWrapper = () => {
         }
     }
 
+    const handleUpdateElement = (element: FunnelElement, index: number) => {
+        const elements = [...funnelElements];
+        elements[index] = element;
+        setFunnelElements(elements);
+    }
+
     return (
         <div className="funnel__wrapper">
             <div className="funnel__settings">
-                {editableElement !== null &&
-                <div>123</div>
+                {(editableElement !== null) &&
+                <EditableElement
+                    index={editableElement}
+                    item={funnelElements[editableElement]}
+                    onChange={handleUpdateElement}
+                />
                 }
+
+                <h2>
+                    Настройки воронки
+                </h2>
 
                 <div className="form__group">
                     <label className="label">
@@ -174,18 +188,16 @@ const FunnelWrapper = () => {
                     label={'Цвет фона'}
                     value={bgColor}
                     onChange={(data) => setBgColor(data.hex)}
-                    clear
+                    clear="Убрать фон"
                 />
             </div>
 
             <div className="funnel__inner">
-                <div>
-                    <input onChange={(e) => setValue(+e.target.value)} type="tel" value={value}/>
-                    <button onClick={handleAddValue}>Добавить</button>
-                    <button onClick={handleDownload}>Выгрузить</button>
-                </div>
+                <DataTable
+                    items={funnel}
+                    onChange={(items) => setFunnel(items)}
+                />
 
-                <DataTable items={funnel} onChange={(items) => setFunnel(items)}/>
                 <CanvasFunnel
                     items={funnel}
                     style={getStyle()}

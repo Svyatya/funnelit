@@ -1,4 +1,5 @@
 import React, { ChangeEvent } from 'react';
+import { Button } from 'antd';
 
 interface ChangeData {
     hex: string | null
@@ -8,7 +9,7 @@ interface Props {
     label: string;
     onChange: (data: ChangeData) => void;
     value: string | null;
-    clear?: boolean;
+    clear?: string;
 }
 
 const ColorEdit = ({ label, onChange, value, clear }: Props) => {
@@ -28,15 +29,22 @@ const ColorEdit = ({ label, onChange, value, clear }: Props) => {
             <label className="label">
                 {label}
             </label>
-            <input
-                type="color"
-                onChange={handleChange}
-                value={value || ''}
-            />
 
-            {clear &&
-            <button onClick={() => onChange({ hex: null })}>Убрать фон</button>
-            }
+            <div className="form__color">
+
+                <input
+                    type="color"
+                    onChange={handleChange}
+                    value={value || ''}
+                />
+                <span className="form__color__value">
+                    {value}
+                </span>
+
+                {clear &&
+                <Button onClick={() => onChange({ hex: null })}>{clear}</Button>
+                }
+            </div>
         </div>
     );
 }
