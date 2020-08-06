@@ -1,6 +1,6 @@
-import React, { ChangeEvent } from 'react';
-import { ColorEdit }          from '../components';
-import { FunnelElement }      from './funnel';
+import React             from 'react';
+import { ColorEdit }     from '../components';
+import { FunnelElement } from './funnel';
 
 interface Props {
     item?: FunnelElement,
@@ -8,12 +8,11 @@ interface Props {
     onChange: (element: FunnelElement, index: number) => void
 }
 
-const EditableElement = ({item, index, onChange}: Props) => {
+const EditableElement = ({ item, index, onChange }: Props) => {
     if (!item) return null;
 
-    const colorChange = ({color, field}: {color: string | null, field: string}) => {
-        console.log(color);
-        const newItem: FunnelElement = {...item};
+    const colorChange = ({ color, field }: { color: string | null, field: string }) => {
+        const newItem: FunnelElement = { ...item };
         newItem[field] = color;
 
         onChange(newItem, index!);
@@ -27,14 +26,14 @@ const EditableElement = ({item, index, onChange}: Props) => {
 
             <ColorEdit
                 label={'Цвет элемента'}
-                onChange={(data) => colorChange({color: data.hex, field: 'bgColor'})}
+                onChange={(data) => colorChange({ color: data.hex, field: 'bgColor' })}
                 value={item.bgColor || null}
                 clear="Сбросить"
             />
 
             <ColorEdit
                 label={'Цвет текста'}
-                onChange={(data) => colorChange({color: data.hex, field: 'textColor'})}
+                onChange={(data) => colorChange({ color: data.hex, field: 'textColor' })}
                 value={item.textColor || null}
                 clear="Сбросить"
             />

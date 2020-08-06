@@ -32,8 +32,6 @@ const DataTable = ({ items, onChange }: Props) => {
     }
 
     const handleAddElement = () => {
-        //if (elevalue === undefined) return;
-
         const newItems = [...items];
         newItems.push(element);
         onChange(newItems);
@@ -67,7 +65,7 @@ const DataTable = ({ items, onChange }: Props) => {
                         <td>
                             <Input
                                 value={item.label}
-                                onChange={(e) => handleValueChange(+e.target.value, i)}
+                                onChange={(e) => handleLabelChange(e.target.value, i)}
                             />
                         </td>
 

@@ -1,12 +1,11 @@
-import x                              from 'dom-to-image';
+import { Input }                      from 'antd';
 import React, { useEffect, useState } from 'react';
-import DataTable                      from './DataTable';
-import { Funnel, FunnelElement }      from './funnel.d';
+import { ColorEdit, FormSlider }      from '../components';
 import CanvasFunnel                   from './CanvasFunnel';
-import { Input, Slider }              from 'antd';
-import { FormSlider, ColorEdit }      from '../components';
-import EditableElement from './EditableElement';
-import NewElement from './NewElement';
+import DataTable                      from './DataTable';
+import Download                       from './Download';
+import EditableElement                from './EditableElement';
+import { Funnel, FunnelElement }      from './funnel.d';
 
 const FunnelWrapper = () => {
     const [funnel, setFunnel] = useState<Funnel[]>([
@@ -15,7 +14,6 @@ const FunnelWrapper = () => {
         { value: 540, label: 'Купили' }
     ]);
 
-    const [value, setValue] = useState(0);
     const [baseWidth, setBaseWidth] = useState(500);
     const [lastWidth, setLastWidth] = useState(250);
     const [baseHeight, setBaseHeight] = useState(60);
@@ -27,7 +25,6 @@ const FunnelWrapper = () => {
     const [title, setTitle] = useState('Посетители за неделю');
     const [funnelElements, setFunnelElements] = useState();
     const [editableElement, setEditableElement] = useState<number | null>(null);
-    let colorTimer = -1;
 
     const baseX = bgPadding + 100;
     const baseY = bgPadding + (title ? innerFontSize * 2 : 0);
@@ -35,7 +32,7 @@ const FunnelWrapper = () => {
 
     useEffect(() => {
         transform();
-    }, [funnel, value, baseWidth, lastWidth, baseHeight, itemColor, bgColor, bgPadding, marginBetween, innerFontSize, title]);
+    }, [funnel, baseWidth, lastWidth, baseHeight, itemColor, bgColor, bgPadding, marginBetween, innerFontSize, title]); // eslint-disable-line react-hooks/exhaustive-deps
 
     function transform() {
         let items: FunnelElement[] = [];
@@ -66,25 +63,6 @@ const FunnelWrapper = () => {
         });
 
         setFunnelElements(items);
-    }
-
-    const handleAddValue = () => {
-        if (funnel.length > 0 && funnel[funnel.length - 1].value < value)
-            return;
-
-        setFunnel([...funnel, { value: value }]);
-        setValue(0);
-    }
-
-    const handleDownload = () => {
-        const node = document.getElementById('funnel-svg');
-
-        x.toPng(node!)
-         .then(function (dataUrl: string) {
-             let img = new Image();
-             img.src = dataUrl;
-             document.body.appendChild(img);
-         })
     }
 
     const getStyle = () => {
@@ -205,6 +183,8 @@ const FunnelWrapper = () => {
                     setEditableElement={setEditableElement}
                     editableElement={editableElement}
                 />
+
+                <Download/>
             </div>
         </div>
     )

@@ -46,12 +46,12 @@ const CanvasFunnel =
     const drawScaled = () => {
         if (!context || !items[0]) return;
 
-        funnelElements.map((element, i) => {
+        funnelElements.forEach((element, i) => {
             drawScaledItem(element, i);
             drawMainText(element, i);
         });
 
-        items.map((item, i) => {
+        items.forEach((item, i) => {
             drawPercents(item, i);
         });
 
@@ -161,7 +161,7 @@ const CanvasFunnel =
     const handleMouseMove = (e: React.MouseEvent) => {
         if (!context) return;
         let active = activeElement(mousePosition({ clientX: e.clientX, clientY: e.clientY }));
-        if (active != currentActiveElement)
+        if (active !== currentActiveElement)
             setActiveElement(active);
     }
 
